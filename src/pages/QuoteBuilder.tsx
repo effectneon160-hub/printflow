@@ -50,24 +50,38 @@ export function QuoteBuilder() {
     next[idx] = item as QuoteItem;
     setItems(next);
   };
+  const buildQuoteData = (status: QuoteStatus) => ({
+    customerId,
+    status,
+    items,
+    subtotal,
+    tax,
+    discount,
+    total,
+    notes,
+  });
+
   const handleSave = (status: QuoteStatus) => {
     if (!customerId) {
       alert('Please select a customer');
       return;
     }
-    const data = {
-      customerId,
-      status,
-      items,
-      subtotal,
-      tax,
-      discount,
-      total,
-      notes
-    };
-    if (isEditing && id) updateQuote(id, data);else
-    addQuote(data);
+    if (isEditing && id) updateQuote(id, buildQuoteData(status));
+    else addQuote(buildQuoteData(status));
     navigate('/quotes');
+  };
+
+  const handleOpenMockup = () => {
+    if (!customerId) {
+      alert('Please select a customer before creating a mockup.');
+      return;
+    }
+    if (isEditing && id) {
+      navigate(`/mockup/${id}`);
+    } else {
+      const newId = addQuote(buildQuoteData('Draft'));
+      navigate(`/mockup/${newId}`);
+    }
   };
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-20">
@@ -210,23 +224,17 @@ export function QuoteBuilder() {
               className="w-full border border-slate-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             
             <div
-              onClick={() => {
-                if (!isEditing) {
-                  alert('Save the quote first.');
-                  return;
-                }
-                navigate(`/mockup/${id}`);
-              }}
+              onClick={handleOpenMockup}
               className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer group">
               
               <ImageIcon className="w-8 h-8 text-slate-400 mx-auto mb-3 group-hover:text-indigo-500 transition-colors" />
               <p className="text-sm font-medium text-slate-700 group-hover:text-indigo-600 transition-colors">
-                {existing?.notes?.includes('[Mockup Attached]') ?
+                {existing?.mockupElements?.length ?
                 'Edit Design Mockup' :
                 'Create Design Mockup'}
               </p>
               <p className="text-xs text-slate-500 mt-1">
-                Open the interactive canvas editor
+                {isEditing ? 'Open the interactive canvas editor' : 'Saves as draft and opens the canvas editor'}
               </p>
             </div>
           </div>

@@ -126,7 +126,7 @@ interface StoreState {
   c: Omit<Customer, 'id' | 'createdAt' | 'totalOrders' | 'totalSpent'>)
   => void;
   updateCustomer: (id: string, data: Partial<Customer>) => void;
-  addQuote: (q: Omit<Quote, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  addQuote: (q: Omit<Quote, 'id' | 'createdAt' | 'updatedAt'>) => string;
   updateQuote: (id: string, data: Partial<Quote>) => void;
   addActivity: (a: Omit<Activity, 'id' | 'date'>) => void;
   addJob: (j: Omit<Job, 'id' | 'createdAt' | 'updatedAt'>) => void;
@@ -745,28 +745,31 @@ export const useStore = create<StoreState>((set) => ({
     customers: s.customers.map((c) => c.id === id ? { ...c, ...d } : c)
   })),
 
-  addQuote: (d) =>
-  set((s) => {
-    const q: Quote = {
-      ...d,
-      id: `Q-${1000 + s.quotes.length + 1}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    const cust = s.customers.find((c) => c.id === d.customerId);
-    return {
-      quotes: [q, ...s.quotes],
-      activities: [
-      {
-        id: `a_${Date.now()}`,
-        type: d.status === 'Sent' ? 'quote_sent' : 'quote_created',
-        description: `${d.status === 'Sent' ? 'Sent' : 'Draft'} Quote ${q.id} for ${cust?.company || 'Customer'}`,
-        date: new Date().toISOString()
-      },
-      ...s.activities]
-
-    };
-  }),
+  addQuote: (d) => {
+    let newId = '';
+    set((s) => {
+      const q: Quote = {
+        ...d,
+        id: `Q-${1000 + s.quotes.length + 1}`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      newId = q.id;
+      const cust = s.customers.find((c) => c.id === d.customerId);
+      return {
+        quotes: [q, ...s.quotes],
+        activities: [
+        {
+          id: `a_${Date.now()}`,
+          type: d.status === 'Sent' ? 'quote_sent' : 'quote_created',
+          description: `${d.status === 'Sent' ? 'Sent' : 'Draft'} Quote ${q.id} for ${cust?.company || 'Customer'}`,
+          date: new Date().toISOString()
+        },
+        ...s.activities]
+      };
+    });
+    return newId;
+  },
   updateQuote: (id, d) =>
   set((s) => {
     const q = s.quotes.find((x) => x.id === id);
