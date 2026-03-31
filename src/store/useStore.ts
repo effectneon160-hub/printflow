@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export type QuoteStatus = 'Draft' | 'Sent' | 'Approved' | 'Rejected';
 export type JobStatus =
@@ -710,7 +711,9 @@ const ACTIVITIES: Activity[] = [
 }];
 
 
-export const useStore = create<StoreState>((set) => ({
+export const useStore = create<StoreState>()(
+persist(
+(set) => ({
   customers: CUSTOMERS,
   quotes: QUOTES,
   activities: ACTIVITIES,
@@ -877,4 +880,9 @@ export const useStore = create<StoreState>((set) => ({
       activities: acts
     };
   })
-}));
+}),
+{
+  name: 'printflow-store',
+  storage: createJSONStorage(() => localStorage),
+}
+));

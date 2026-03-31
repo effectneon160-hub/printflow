@@ -9,7 +9,8 @@ import {
   Package,
   BarChart,
   Settings,
-  Printer } from
+  Printer,
+  Palette } from
 'lucide-react';
 const nav = [
 {
@@ -36,6 +37,11 @@ const nav = [
   name: 'Invoices',
   path: '/invoices',
   icon: FileSpreadsheet
+},
+{
+  name: 'Mockups',
+  path: '/mockups',
+  icon: Palette
 },
 {
   name: 'Products',

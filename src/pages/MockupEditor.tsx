@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Save, Type, Image as ImageIcon, Square, Circle,
   Undo, Redo, ZoomIn, ZoomOut, Grid, MousePointer2, Trash2,
-  Layers, Settings2, Link as LinkIcon, ChevronDown, Palette,
+  Layers, Settings2, Link as LinkIcon, ChevronDown, Palette, Upload,
 } from 'lucide-react';
 import { useStore, MockupElement } from '../store/useStore';
 
@@ -34,6 +34,7 @@ export function MockupEditor() {
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [elements, setElements] = useState<MockupElement[]>(
     () => quote?.mockupElements ? JSON.parse(JSON.stringify(quote.mockupElements)) : []
@@ -243,6 +244,18 @@ export function MockupEditor() {
     setShowImageDialog(false);
   };
 
+  const handleDeviceUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target?.result as string;
+      addEl('image', { content: dataUrl, width: 160, height: 160 });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (editingTextId) return;
@@ -328,9 +341,22 @@ export function MockupEditor() {
             <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-2">Add Elements</p>
             <div className="space-y-1">
               <button
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full flex items-center gap-3 p-2.5 rounded-lg text-slate-300 hover:bg-slate-900 hover:text-white text-sm">
+                <Upload className="w-4 h-4" />
+                Upload from Device
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleDeviceUpload}
+              />
+              <button
                 onClick={() => setShowImageDialog(true)}
                 className="w-full flex items-center gap-3 p-2.5 rounded-lg text-slate-300 hover:bg-slate-900 hover:text-white text-sm">
-                <ImageIcon className="w-4 h-4" />
+                <LinkIcon className="w-4 h-4" />
                 Add Image (URL)
               </button>
               <button

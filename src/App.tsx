@@ -11,6 +11,7 @@ import { Jobs } from './pages/Jobs';
 import { Invoices } from './pages/Invoices';
 import { MockupEditor } from './pages/MockupEditor';
 import { Reports, Settings } from './pages/Placeholders';
+import { Mockups } from './pages/Mockups';
 export function App() {
   return (
     <BrowserRouter>
@@ -25,6 +26,7 @@ export function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/invoices" element={<Invoices />} />
+          <Route path="/mockups" element={<Mockups />} />
           <Route path="/mockup/:id" element={<MockupEditor />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
