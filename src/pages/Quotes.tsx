@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Plus, Filter } from 'lucide-react';
+import { Search, Plus, Filter, Palette } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { StatusBadge } from '../components/StatusBadge';
 export function Quotes() {
@@ -69,11 +69,13 @@ export function Quotes() {
               <th className="px-6 py-3 text-right">Total</th>
               <th className="px-6 py-3">Status</th>
               <th className="px-6 py-3">Date</th>
+              <th className="px-6 py-3">Mockup</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filtered.map((q) => {
               const c = customers.find((x) => x.id === q.customerId);
+              const hasMockup = q.mockupElements && q.mockupElements.length > 0;
               return (
                 <tr key={q.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-6 py-3.5 font-medium text-slate-900">
@@ -107,13 +109,21 @@ export function Quotes() {
                   <td className="px-6 py-3.5 text-slate-500">
                     {new Date(q.createdAt).toLocaleDateString()}
                   </td>
+                  <td className="px-6 py-3.5">
+                    <Link
+                      to={`/mockup/${q.id}`}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${hasMockup ? 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
+                      <Palette className="w-3 h-3" />
+                      {hasMockup ? 'View' : 'Create'}
+                    </Link>
+                  </td>
                 </tr>);
 
             })}
             {filtered.length === 0 &&
             <tr>
                 <td
-                colSpan={6}
+                colSpan={7}
                 className="px-6 py-12 text-center text-slate-500">
                 
                   No quotes found.

@@ -26,6 +26,21 @@ export interface QuoteItem {
   unitPrice: number;
   total: number;
 }
+export interface MockupElement {
+  id: string;
+  type: 'text' | 'image' | 'shape';
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rotation: number;
+  opacity: number;
+  content?: string;
+  color?: string;
+  shapeType?: 'rect' | 'circle';
+  fontSize?: number;
+}
+
 export interface Quote {
   id: string;
   customerId: string;
@@ -38,6 +53,8 @@ export interface Quote {
   notes: string;
   createdAt: string;
   updatedAt: string;
+  mockupElements?: MockupElement[];
+  mockupBackground?: string;
 }
 export interface Product {
   id: string;

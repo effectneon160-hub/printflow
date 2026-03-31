@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Plus, Calendar, X } from 'lucide-react';
+import { Search, Plus, Calendar, X, Palette } from 'lucide-react';
 import { useStore, Job, JobStatus } from '../store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StatusBadge } from '../components/StatusBadge';
+import { useNavigate } from 'react-router-dom';
 const COLUMNS: JobStatus[] = [
 'Pending',
 'In Design',
@@ -20,6 +21,7 @@ p === 'Medium' ?
 'bg-slate-100 text-slate-600';
 export function Jobs() {
   const { jobs, updateJob, customers, quotes } = useStore();
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<Job | null>(null);
   const [dragOverCol, setDragOverCol] = useState<string | null>(null);
@@ -263,6 +265,15 @@ export function Jobs() {
                     </table>
                   </div>
                 </div>
+
+                <button
+                  onClick={() => navigate(`/mockup/${selected.quoteId}`)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 rounded-xl text-sm font-medium transition-colors">
+                  <Palette className="w-4 h-4" />
+                  {quotes.find(q => q.id === selected.quoteId)?.mockupElements?.length
+                    ? 'Edit Design Mockup'
+                    : 'Create Design Mockup'}
+                </button>
               </div>
             </motion.div>
           </div>
